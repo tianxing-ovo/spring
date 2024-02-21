@@ -12,6 +12,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.Resource;
+import java.util.Collection;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * 测试BeanFactory功能
@@ -33,7 +36,17 @@ public class TestBeanFactory {
         // 执行BeanFactoryPostProcessor
         beanFactory.getBeansOfType(BeanFactoryPostProcessor.class).values().forEach(beanFactoryPostProcessor -> beanFactoryPostProcessor.postProcessBeanFactory(beanFactory));
         // 添加BeanPostProcessor
-        beanFactory.addBeanPostProcessors(beanFactory.getBeansOfType(BeanPostProcessor.class).values());
+        Collection<BeanPostProcessor> beanPostProcessors = beanFactory.getBeansOfType(BeanPostProcessor.class).values();
+        beanFactory.addBeanPostProcessors(beanPostProcessors);
+        // 默认情况,[AutowiredAnnotationBeanPostProcessor, CommonAnnotationBeanPostProcessor]
+        System.out.println(beanPostProcessors.stream()
+                .map(beanPostProcessor -> beanPostProcessor.getClass().getSimpleName())
+                .collect(Collectors.toList()));
+        // 根据order排序,[CommonAnnotationBeanPostProcessor, AutowiredAnnotationBeanPostProcessor]
+        System.out.println(beanPostProcessors.stream()
+                .sorted(Objects.requireNonNull(beanFactory.getDependencyComparator()))
+                .map(beanPostProcessor -> beanPostProcessor.getClass().getSimpleName())
+                .collect(Collectors.toList()));
         // 提前实例化所有单例bean
         beanFactory.preInstantiateSingletons();
         // 获取Bean2
