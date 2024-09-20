@@ -1,15 +1,15 @@
 package com.ltx;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.ltx.event.CustomEvent;
-import io.github.tianxingovo.common.ObjectUtil;
 import lombok.SneakyThrows;
-import org.redisson.spring.starter.RedissonAutoConfiguration;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultSingletonBeanRegistry;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.env.ConfigurableEnvironment;
 
 import java.lang.reflect.Field;
@@ -17,7 +17,8 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.Map;
 
-@SpringBootApplication(exclude = {RedissonAutoConfiguration.class})
+@SpringBootApplication
+@EnableAspectJAutoProxy(exposeProxy = true)
 public class Application {
 
     @SneakyThrows
@@ -47,7 +48,7 @@ public class Application {
     public static void printSingletonObjects(BeanFactory beanFactory) {
         Field field = DefaultSingletonBeanRegistry.class.getDeclaredField("singletonObjects");
         field.setAccessible(true);
-        Map<String, Object> map = ObjectUtil.castToMap(field.get(beanFactory));
+        Map<String, Object> map = BeanUtil.beanToMap(field.get(beanFactory));
         map.forEach((key, value) -> System.out.println(key + "=" + value));
     }
 }
