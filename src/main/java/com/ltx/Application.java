@@ -11,6 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -19,6 +20,7 @@ import java.util.Map;
 
 @SpringBootApplication
 @EnableAspectJAutoProxy(exposeProxy = true)
+@EnableAsync
 public class Application {
 
     @SneakyThrows
